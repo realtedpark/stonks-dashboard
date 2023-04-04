@@ -33,6 +33,7 @@
 
     <div>
         <p>Selected Stonk: <span id="display-stock-symbol">__________</span></p>
+        <p>Lastest (Adjusted) Open Price: <span id="display-latest-open-price">__________</span></p>
         <p>Latest (Adjusted) Closing Price: <span id="display-latest-closing-price">__________</span></p>
     </div>
 
@@ -48,6 +49,7 @@
 
         // display elements:
         var displaySymbol = document.getElementById("display-stock-symbol")
+        var displayLatestOpen = document.getElementById("display-latest-open-price")
         var displayLatestClose = document.getElementById("display-latest-closing-price")
 
         // reusable function for chart display:
@@ -77,6 +79,10 @@
                 var earliestDate = dates[dates.length - 1]
                 console.log("DATE RANGE:", earliestDate, "-", latestDate)
 
+                var openPrice = prices.map(obj => parseFloat(obj["1. open"]))[0];
+                var openPriceUSD = "$" + openPrice.toFixed(2);
+                console.log("LATEST OPEN:" + openPrice)
+
                 var closingPrices = prices.map(obj => parseFloat(obj["5. adjusted close"])) //> an array of prices, for the chart
                 var latestClose = closingPrices[0]
                 var latestCloseUSD = "$" + latestClose.toFixed(2) // formatting the number with dollar sign and rounding to two decimal places
@@ -84,7 +90,15 @@
 
                 // updating the contents of the page:
                 displaySymbol.innerText = symbol
+                displayLatestOpen.innerText = openPriceUSD;
                 displayLatestClose.innerText = latestCloseUSD
+
+                // change color of closing price if it is lower than the open price
+                if (latestClose >= openPrice){
+                    displayLatestClose.style.color = "green";
+                } else {
+                    displayLatestClose.style.color = "red";
+                }
 
                 // charting the data (see https://plotly.com/javascript/line-charts/):
                 var title = "Daily Closing Prices for Stock: " + symbol
